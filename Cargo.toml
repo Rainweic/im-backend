@@ -1,0 +1,10 @@
+[package]
+name = "im-backend"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+resolver = "2"
+members = ["abi"]
+
+[dependencies]
