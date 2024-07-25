@@ -5,6 +5,6 @@ edition = "2021"
 
 [workspace]
 resolver = "2"
-members = ["abi"]
+members = ["abi", "ws"]
 
 [dependencies]
