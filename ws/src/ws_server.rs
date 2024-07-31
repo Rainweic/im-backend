@@ -19,14 +19,6 @@ pub struct AppState {
     manager: Manager,
 }
 
-pub async fn websocket_handler(
-    Path((user_id, pointer_id)): Path<(String, String)>,
-    ws: WebSocketUpgrade,
-    State(state): State<AppState>,
-) -> impl IntoResponse {
-    ws.on_upgrade(move |socket| websocket(user_id, pointer_id, socket, state))
-}
-
 pub async fn websocket(user_id: String, pointer_id: String, ws: WebSocket, app_state: AppState) {
     tracing::debug!(
         "client {} connected, user id : {}",
@@ -111,16 +103,26 @@ pub async fn websocket(user_id: String, pointer_id: String, ws: WebSocket, app_s
     tracing::debug!("client thread exit {}", hub.hub.iter().count());
 }
 
+
+pub async fn websocket_handler(
+    Path((user_id, pointer_id)): Path<(String, String)>,
+    ws: WebSocketUpgrade,
+    State(state): State<AppState>,
+) -> impl IntoResponse {
+    ws.on_upgrade(move |socket| websocket(user_id, pointer_id, socket, state))
+}
+
+
 pub async fn start(config: Config) {
     // 创建通道，用来从websocket连接中向manager发送消息。
     let (tx, rx) = mpsc::channel(1024);
-    let hub = Manager::new(tx);
-    let mut cloned_hub = hub.clone();
+    let manager = Manager::new(tx);
+    let mut cloned_manager = manager.clone();
     tokio::spawn(async move {
-        cloned_hub.run(rx).await;
+        cloned_manager.run(rx).await;
     });
     let app_state = AppState {
-        manager: hub.clone(),
+        manager: manager.clone(),
     };
 
     // 定义一个处理WebSocket连接的路由。
