@@ -18,11 +18,9 @@ impl BuilderExtend for tonic_build::Builder {
             acc.type_attribute(path, "#[derive(sqlx::Type)]")
         })
     }
-
 }
 
 fn main() {
-
     tonic_build::configure()
         .out_dir("src/pb")
         .with_serde(&["Msg"])
@@ -32,5 +30,4 @@ fn main() {
     Command::new("cargo").arg("fmt").output().unwrap();
 
     println!("cargo: rerun-if-changed=abi/protos/messages.proto");
-
 }

@@ -1,6 +1,6 @@
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WsServerConfig {
@@ -8,12 +8,12 @@ pub struct WsServerConfig {
     pub host: String,
     pub port: u16,
     pub name: String,
-    pub tags: Vec<String>
+    pub tags: Vec<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config {
-    pub websocket: WsServerConfig
+    pub websocket: WsServerConfig,
 }
 
 impl Config {

@@ -1,10 +1,10 @@
-use std::sync::Arc;
-use std::sync::mpsc::SendError;
+use crate::client::Client;
+use abi::message::Msg;
 use dashmap::DashMap;
+use std::sync::mpsc::SendError;
+use std::sync::Arc;
 use tokio::sync::mpsc;
 use tracing::{debug, error, info};
-use abi::message::Msg;
-use crate::client::Client;
 
 type UserID = String;
 type PlatformID = String;
@@ -22,14 +22,13 @@ impl Manager {
     pub fn new(tx: mpsc::Sender<Msg>) -> Self {
         Self {
             tx,
-            hub: Arc::new(DashMap::new())
+            hub: Arc::new(DashMap::new()),
         }
     }
 
     /// 注册
     pub async fn register(&mut self, user_id: UserID, client: Client) {
-        let entry = self.hub.entry(user_id.clone())
-            .or_insert_with(DashMap::new);
+        let entry = self.hub.entry(user_id.clone()).or_insert_with(DashMap::new);
         entry.insert(client.platform_id.clone(), client);
     }
 
@@ -71,7 +70,10 @@ impl Manager {
         }
     }
 
-    pub async fn broadcast(&self, msg: Msg) -> Result<(), tokio::sync::mpsc::error::SendError<Msg>> {
+    pub async fn broadcast(
+        &self,
+        msg: Msg,
+    ) -> Result<(), tokio::sync::mpsc::error::SendError<Msg>> {
         self.tx.send(msg).await
     }
 }

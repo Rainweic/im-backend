@@ -1,17 +1,15 @@
-use std::sync::Arc;
 use axum::extract::ws::{Message, WebSocket};
-use futures::SinkExt;
 use futures::stream::SplitSink;
+use futures::SinkExt;
+use std::sync::Arc;
 use tokio::sync::RwLock;
 
-
 type ClientSender = Arc<RwLock<SplitSink<WebSocket, Message>>>;
-
 
 pub struct Client {
     pub sender: ClientSender,
     pub user_id: String,
-    pub platform_id: String
+    pub platform_id: String,
 }
 
 impl Client {
